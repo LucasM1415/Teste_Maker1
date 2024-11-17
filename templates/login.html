@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+    <title>Login</title>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Login</h2>
+        <form action="{{ url_for('app.login') }}" method="POST">
+            <input type="email" name="email_primary" placeholder="Email Institucional" required>
+            <input type="password" name="password" placeholder="Senha" required>
+            <button type="submit">Login</button>
+        </form>
+        <p>Você não tem conta? <a href="{{ url_for('app.register') }}">Registro</a></p>
+    </div>
+</body>
+</html>
