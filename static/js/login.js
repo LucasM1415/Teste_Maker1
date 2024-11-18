@@ -5,10 +5,7 @@ document.querySelector("#loginForm").addEventListener("submit", async (e) => {
     const formData = new FormData(form);
     
     // Convertendo FormData para um objeto JSON
-    const data = {};
-    formData.forEach((value, key) => {
-        data[key] = value;
-    });
+    const data = Object.fromEntries(formData.entries());
 
     try {
         const response = await fetch(form.action, {
@@ -28,8 +25,11 @@ document.querySelector("#loginForm").addEventListener("submit", async (e) => {
             messageElement.style.color = "green";
 
             // Redireciona para o dashboard após login bem-sucedido
-            window.location.href = "/dashboard"; // Caminho da rota do dashboard
-
+            if (result.message.includes("Admin")) {
+                window.location.href = "/admin_dashboard"; // Caminho da rota do dashboard do admin
+            } else {
+                window.location.href = "/dashboard"; // Caminho da rota do dashboard do usuário
+            }
         } else {
             // Exibe o erro, se houver
             messageElement.textContent = result.error || "Erro ao fazer login.";
@@ -37,5 +37,10 @@ document.querySelector("#loginForm").addEventListener("submit", async (e) => {
         }
     } catch (error) {
         console.error("Erro ao enviar formulário:", error);
+
+        // Mensagem genérica para erros no envio
+        const messageElement = document.getElementById("message");
+        messageElement.textContent = "Erro inesperado. Tente novamente.";
+        messageElement.style.color = "red";
     }
 });
