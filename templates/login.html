@@ -9,12 +9,18 @@
 <body>
     <div class="form-container">
         <h2>Login</h2>
-        <form action="{{ url_for('app.login') }}" method="POST">
-            <input type="email" name="email_primary" placeholder="Email Institucional" required>
+        <form id="loginForm" action="{{ url_for('app.login') }}" method="POST">
+            <input type="email" name="email" placeholder="Email Institucional" required>
             <input type="password" name="password" placeholder="Senha" required>
             <button type="submit">Login</button>
         </form>
+        
+        <!-- Div para exibir mensagens -->
+        <div id="message"></div>
+
         <p>Você não tem conta? <a href="{{ url_for('app.register') }}">Registro</a></p>
     </div>
+    
+    <script src="{{ url_for('static', filename='js/login.js') }}"></script>
 </body>
 </html>

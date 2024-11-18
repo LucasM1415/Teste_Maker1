@@ -1,5 +1,4 @@
 from flask import Flask
-from config.db_setup import init_db, check_table
 from routes.app_routes import app_bp
 from routes.admin_routes import admin_bp
 from routes.user_routes import user_bp   
@@ -7,6 +6,8 @@ from routes.user_routes import user_bp
 
 app = Flask(__name__)
 
+#Chave para seção
+app.secret_key = 'sua-chave-secreta' 
 
 #Rotas da Aplicação
 app.register_blueprint(app_bp)

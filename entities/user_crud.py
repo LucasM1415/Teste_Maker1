@@ -7,7 +7,7 @@ DATABASE = os.path.join(os.path.abspath(os.path.dirname(__file__)), '../config/d
 def connect_db():
     return sqlite3.connect(DATABASE)
 
-# Função para criar um usuário
+# Função para criar um usuário(Registro)
 def create_user(data):
     conn = connect_db()
     cursor = conn.cursor()
@@ -35,6 +35,34 @@ def get_all_users():
         {"id": user[0], "name": user[1], "email": user[2], "institutionName": user[3]} 
         for user in users
     ], 200
+
+#Função para achar um usuario pelo email e senha(Login)
+def get_user_by_email_and_password(email, password):
+    conn = connect_db()
+    cursor = conn.cursor()
+    
+    cursor.execute('''SELECT id, name, email FROM user WHERE email = ? AND password = ?''', (email, password))
+    user = cursor.fetchone()  # Busca o primeiro usuário que corresponda
+    
+    conn.close()
+    
+    if user:
+        return {"id": user[0], "name": user[1], "email": user[2]}  # Retorna o usuário se encontrado
+    return None  # Retorna None caso não encontre
+
+#Função para achar um usuario pelo id(Login e seção)
+def get_user_by_id(user_id):
+    conn = connect_db()
+    cursor = conn.cursor()
+    
+    cursor.execute('''SELECT id, name FROM user WHERE id = ?''', (user_id,))
+    user = cursor.fetchone()  # Retorna o primeiro usuário com o id correspondente
+    
+    conn.close()
+    
+    if user:
+        return {"id": user[0], "name": user[1]}  # Retorna o usuário
+    return None  # Retorna None caso não encontre
 
 # Função para atualizar um usuário
 def update_user(id, data):
