@@ -8,8 +8,8 @@
 </head>
 <body>
     <div class="dashboard-container">
-        <h1>Bem-vindo, {{ user['name'] }}!</h1>
-        <p>Este é o painel administrativo.</p>
+        <h1>Olá, {{ user.name }}!</h1>
+        <p>Bem-vindo ao seu dashboard de ADM, já que vc é um.</p>
         <a href="{{ url_for('user.logout') }}">Sair</a>
     </div>
 </body>
