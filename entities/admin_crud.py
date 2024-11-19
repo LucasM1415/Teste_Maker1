@@ -65,10 +65,10 @@ def get_admin_by_email_and_password(email, password):
     cursor = conn.cursor()
     
     cursor.execute('''SELECT id, username, email FROM admin WHERE email = ? AND password = ?''', (email, password))
-    admin = cursor.fetchone()  # Busca o primeiro administrador que corresponda
+    admin = cursor.fetchone()  # Retorna o primeiro administrador encontrado
     
     conn.close()
     
     if admin:
-        return {"id": admin[0], "username": admin[1], "email": admin[2]}  # Retorna o administrador se encontrado
-    return None  # Retorna None caso não encontre
+        return {"id": admin[0], "username": admin[1], "email": admin[2]}  # Retorna o admin se encontrado
+    return None  # Retorna None se não encontrar

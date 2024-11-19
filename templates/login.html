@@ -10,8 +10,8 @@
     <div class="form-container">
         <h2>Login</h2>
         <form id="loginForm" action="{{ url_for('app.login') }}" method="POST">
-            <input type="email" name="email" placeholder="Email Institucional" required>
-            <input type="password" name="password" placeholder="Senha" required>
+            <input type="email" name="email" placeholder="Email Institucional" required >
+            <input type="password" name="password" placeholder="Senha" required autocomplete="off">
             <button type="submit">Login</button>
         </form>
         
