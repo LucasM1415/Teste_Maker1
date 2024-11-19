@@ -41,21 +41,30 @@ def login_user():
     if not email or not password:
         return jsonify({"error": "Email e senha são obrigatórios"}), 400
     
-    # Tenta encontrar o usuário na tabela de admin
-    admin = get_admin_by_email_and_password(email, password)
+    # Tenta encontrar o usuário na tabela admin
+    admin = get_admin_by_email_and_password(email, password)  # Função que busca administrador pelo email e senha
+
     if admin:
-        session['user_id'] = admin['id']
-        session['role'] = 'admin'
-        return jsonify({"message": f"Login bem-sucedido, Olá, {admin['username']}! Você é um administrador."}), 200
+        session['user_id'] = admin['id']  # Armazena o ID do admin na sessão
+        session['role'] = 'admin'  # Define o 'role' como 'admin'
+        session['name'] = admin['username']
+        session['email'] = admin['email']
+        print(f"Login bem-sucedido, Olá, {admin['username']}! Você é um administrador.") 
+        return jsonify({"message": f"Login bem-sucedido, Olá, {admin['username']}! Você é um administrador.", "redirect": "/admin_dashboard"}), 200
     
-    # Tenta encontrar o usuário na tabela de user
-    user = get_user_by_email_and_password(email, password)
+    # Se não encontrou na tabela admin, tenta encontrar na tabela user
+    user = get_user_by_email_and_password(email, password)  # Função que busca usuário pelo email e senha
+
     if user:
-        session['user_id'] = user['id']
-        session['role'] = 'user'
-        return jsonify({"message": f"Login bem-sucedido, Olá, {user['name']}! Você é um usuário."}), 200
-    
-    return jsonify({"error": "Email ou senha incorretos"}), 401
+        session['user_id'] = user['id']  # Armazena o ID do usuário na sessão
+        session['role'] = 'user'  # Define o 'role' como 'user'
+        session['name'] = user['name']
+        session['email'] = user['email']
+        return jsonify({"message": f"Login bem-sucedido, Olá, {user['name']}! Você é um usuário.", "redirect": "/user_dashboard"}), 200
+
+    # Se não encontrou nenhum usuário com esse email e senha
+    return jsonify({"error": "Credenciais inválidas."}), 401
+
 
 
 
@@ -91,30 +100,52 @@ def delete_existing_user(id):
 @user_bp.route('/dashboard')
 def dashboard():
     user_id = session.get('user_id')
-    user_role = session.get('role')
+    role = session.get('role')
 
-    if not user_id or not user_role:
-        return redirect(url_for('app.login'))  # Redireciona para o login se não estiver logado
+    if not user_id or not role:
+        return redirect(url_for('app.login'))  # Redireciona para login se não autenticado
 
-    if user_role == 'admin':
-        return redirect(url_for('app.admin_dashboard'))
-    elif user_role == 'user':
-        return redirect(url_for('app.dashboard'))
-    else:
-        return redirect(url_for('app.login'))  # Em caso de erro, retorna ao login
+    if role == 'admin':
+        return redirect(url_for('user.admin_dashboard'))
+    elif role == 'user':
+        return redirect(url_for('user.user_dashboard'))
+
+    return jsonify({"error": "Erro ao identificar o tipo de usuário"}), 500
+
+
+
+
+
+
+
+
+
+
 
 
 @user_bp.route('/admin_dashboard')
 def admin_dashboard():
-    if session.get('role') != 'admin':
-        return redirect(url_for('app.login'))
-    return render_template('admin_dashboard.html')  # Renderiza o dashboard do admin
+    if session.get('role') != 'admin':  # Verifica se o role é 'admin'
+        return redirect(url_for('app.home'))  # Redireciona para login se não for admin
+
+    user = {
+        "id": session.get('user_id'),
+        "name": session.get('name'),
+        "email": session.get('email')
+    }
+    return render_template('admin_dashboard.html', user=user)
 
 
-@user_bp.route('/dashboard')
+@user_bp.route('/user_dashboard')
 def user_dashboard():
     if session.get('role') != 'user':
-        return redirect(url_for('app.login'))
-    return render_template('dashboard.html')  # Renderiza o dashboard do usuário
+        return redirect(url_for('app.login'))  # Redireciona para login se não for user
+
+    user = {
+        "id": session.get('id'),
+        "name": session.get('name'),
+        "email": session.get('email')
+    }
+    return render_template('dashboard.html', user=user)
 
 
